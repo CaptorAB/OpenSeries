@@ -29,8 +29,10 @@ from openseries.types import (
     ValueType,
 )
 
+__all__ = ["ReturnSimulation"]
 
-def random_generator(seed: Optional[int]) -> Generator:
+
+def _random_generator(seed: Optional[int]) -> Generator:
     """
     Make a Numpy Random Generator object.
 
@@ -187,7 +189,7 @@ class ReturnSimulation(BaseModel):
 
         """
         if not randomizer:
-            randomizer = random_generator(seed=seed)
+            randomizer = _random_generator(seed=seed)
 
         returns = randomizer.normal(
             loc=mean_annual_return / trading_days_in_year,
@@ -244,7 +246,7 @@ class ReturnSimulation(BaseModel):
 
         """
         if not randomizer:
-            randomizer = random_generator(seed=seed)
+            randomizer = _random_generator(seed=seed)
 
         returns = (
             randomizer.lognormal(
@@ -303,7 +305,7 @@ class ReturnSimulation(BaseModel):
 
         """
         if not randomizer:
-            randomizer = random_generator(seed=seed)
+            randomizer = _random_generator(seed=seed)
 
         drift = (mean_annual_return - 0.5 * mean_annual_vol**2.0) * (
             1.0 / trading_days_in_year
@@ -375,7 +377,7 @@ class ReturnSimulation(BaseModel):
 
         """
         if not randomizer:
-            randomizer = random_generator(seed=seed)
+            randomizer = _random_generator(seed=seed)
 
         normal_mean = 0.0
         wiener = randomizer.normal(

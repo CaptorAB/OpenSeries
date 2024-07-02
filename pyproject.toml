@@ -49,14 +49,14 @@ statsmodels = ">=0.14.0,<1.0.0"
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.5.4"
 coverage-badge = "^1.1.1"
-mypy = "^1.10.0"
-pandas-stubs = "^2.2.2.240603"
+mypy = "^1.10.1"
+pandas-stubs = ">=2.1.2,<3.0.0"
 pre-commit = "^3.7.1"
 pytest = "^8.2.2"
-ruff = "^0.4.10"
-types-openpyxl = "^3.1.4.20240621"
-types-python-dateutil = "^2.9.0.20240316"
-types-requests = "^2.32.0.20240622"
+ruff = "^0.5.0"
+types-openpyxl = ">=3.1.2,<4.0.0"
+types-python-dateutil = ">=2.8.2,<3.0.0"
+types-requests = ">=2.20.0,<3.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.8.3"]

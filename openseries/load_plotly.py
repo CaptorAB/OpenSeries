@@ -11,6 +11,8 @@ from requests.exceptions import ConnectionError
 
 from openseries.types import CaptorLogoType, PlotlyLayoutType
 
+__all__ = ["load_plotly_dict"]
+
 
 def _check_remote_file_existence(url: str) -> bool:
     """

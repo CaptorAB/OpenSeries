@@ -46,6 +46,8 @@ from openseries.types import (
     ValueType,
 )
 
+__all__ = ["OpenTimeSeries", "timeseries_chain"]
+
 TypeOpenTimeSeries = TypeVar("TypeOpenTimeSeries", bound="OpenTimeSeries")
 
 

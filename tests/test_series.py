@@ -912,19 +912,19 @@ class TestOpenTimeSeries(TestCase):
 
         dates = cseries.calc_range(months_offset=48)
 
-        if ["2015-06-26", "2019-06-28"] != [
+        if [
             dates[0].strftime("%Y-%m-%d"),
             dates[1].strftime("%Y-%m-%d"),
-        ]:
+        ] != ["2015-06-26", "2019-06-28"]:
             msg = "Method calc_range() not working as intended"
             raise ValueError(msg)
 
         dates = self.randomseries.calc_range(from_dt=dt.date(2016, 6, 30))
 
-        if ["2016-06-30", "2019-06-28"] != [
+        if [
             dates[0].strftime("%Y-%m-%d"),
             dates[1].strftime("%Y-%m-%d"),
-        ]:
+        ] != ["2016-06-30", "2019-06-28"]:
             msg = "Method calc_range() not working as intended"
             raise ValueError(msg)
 

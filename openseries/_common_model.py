@@ -9,9 +9,10 @@ from math import ceil
 from pathlib import Path
 from secrets import choice
 from string import ascii_letters
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, SupportsFloat, Union, cast
 
 from numpy import float64, inf, isnan, log, maximum, sqrt
+from numpy.typing import NDArray
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -1132,7 +1133,7 @@ class _CommonModel(BaseModel):
         )
 
         if self.tsdf.shape[1] == 1:
-            return float(result.iloc[0])
+            return float(cast(SupportsFloat, result.iloc[0]))
         return Series(
             data=result,
             index=self.tsdf.columns,
@@ -1361,7 +1362,7 @@ class _CommonModel(BaseModel):
             label = f"Imp vol from VaR {level:.0%}"
 
         if self.tsdf.shape[1] == 1:
-            return float(result.iloc[0])
+            return float(cast(SupportsFloat, result.iloc[0]))
         return Series(
             data=result,
             index=self.tsdf.columns,
@@ -1593,7 +1594,7 @@ class _CommonModel(BaseModel):
             from_dt=from_date,
             to_dt=to_date,
         )
-        result = skew(
+        result: NDArray[float64] = skew(
             a=self.tsdf.loc[cast(int, earlier) : cast(int, later)]
             .pct_change(fill_method=cast(str, None))
             .to_numpy(),
@@ -1642,7 +1643,7 @@ class _CommonModel(BaseModel):
             from_dt=from_date,
             to_dt=to_date,
         )
-        result = kurtosis(
+        result: NDArray[float64] = kurtosis(
             self.tsdf.loc[cast(int, earlier) : cast(int, later)].pct_change(
                 fill_method=cast(str, None),
             ),

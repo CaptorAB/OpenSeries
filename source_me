@@ -1,3 +1,4 @@
+source venv/bin/activate
 if [[ ":$PYTHONPATH:" != *":$PWD:"* ]]; then
     export PYTHONPATH=${PWD}:$PYTHONPATH
     echo ""
@@ -6,7 +7,6 @@ else
     echo ""
     echo "PYTHONPATH not changed. It is '$PYTHONPATH'"
 fi
-source venv/bin/activate
 echo ""
 echo "The Python used in the '$(basename "$VIRTUAL_ENV")' environment is:"
 which python

@@ -60,7 +60,7 @@ from openseries._common_model import _CommonModel
 from openseries.datefixer import do_resample_to_business_period_ends
 from openseries.load_plotly import load_plotly_dict
 from openseries.series import OpenTimeSeries
-from openseries.simulation import random_generator
+from openseries.simulation import _random_generator
 from openseries.types import (
     CountriesType,
     DaysInYearType,
@@ -79,6 +79,15 @@ from openseries.types import (
     OpenFramePropertiesList,
     ValueType,
 )
+
+__all__ = [
+    "OpenFrame",
+    "constrain_optimized_portfolios",
+    "efficient_frontier",
+    "prepare_plot_data",
+    "sharpeplot",
+    "simulate_portfolios",
+]
 
 
 # noinspection PyUnresolvedReferences
@@ -478,12 +487,12 @@ class OpenFrame(_CommonModel):
             An OpenFrame object
 
         """
-        head = self.tsdf.loc[self.first_indices.max()].copy()
-        tail = self.tsdf.loc[self.last_indices.min()].copy()
+        head: Series[float] = self.tsdf.loc[self.first_indices.max()].copy()
+        tail: Series[float] = self.tsdf.loc[self.last_indices.min()].copy()
         dates = do_resample_to_business_period_ends(
             data=self.tsdf,
-            head=head,  # type: ignore[arg-type,unused-ignore]
-            tail=tail,  # type: ignore[arg-type,unused-ignore]
+            head=head,
+            tail=tail,
             freq=freq,
             countries=countries,
         )
@@ -1729,7 +1738,7 @@ def simulate_portfolios(
 
     log_ret.columns = log_ret.columns.droplevel(level=1)
 
-    randomizer = random_generator(seed=seed)
+    randomizer = _random_generator(seed=seed)
 
     all_weights = zeros((num_ports, simframe.item_count))
     ret_arr = zeros(num_ports)
@@ -1764,6 +1773,7 @@ def simulate_portfolios(
     return simdf.dropna()
 
 
+# noinspection PyUnusedLocal
 def efficient_frontier(  # noqa: C901
     eframe: OpenFrame,
     num_ports: int = 5000,

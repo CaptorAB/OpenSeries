@@ -1,6 +1,6 @@
 """Test suite for the openseries/frame.py module."""
 
-# mypy: disable-error-code="operator,type-arg,arg-type,unused-ignore,union-attr"
+# mypy: disable-error-code="operator,type-arg,arg-type,unused-ignore"
 from __future__ import annotations
 
 import datetime as dt
@@ -620,7 +620,7 @@ class TestOpenFrame(TestCase):
         weights: Optional[list[float]] = [0.2, 0.2, 0.2, 0.2, 0.2]
         if weights != mpframe.weights:
             msg = "make_portfolio() equal weight strategy not working as intended."
-            ValueError(msg)
+            raise ValueError(msg)
 
         with localcontext() as decimal_context:
             decimal_context.rounding = ROUND_HALF_UP
@@ -630,14 +630,17 @@ class TestOpenFrame(TestCase):
                 round(Decimal(wgt), 6) for wgt in cast(list[float], mpframe.weights)
             ]
             if inv_vol_weights != [
-                Decimal("0.252280"),
-                Decimal("0.163721"),
-                Decimal("0.181780"),
-                Decimal("0.230792"),
-                Decimal("0.171427"),
+                Decimal("0.152977"),
+                Decimal("0.206984"),
+                Decimal("0.212791"),
+                Decimal("0.214929"),
+                Decimal("0.212319"),
             ]:
-                msg = "make_portfolio() inverse vol strategy not working as intended."
-                ValueError(msg)
+                msg = (
+                    "make_portfolio() inverse vol strategy not working as intended."
+                    f"output is \n{inv_vol_weights}"
+                )
+                raise ValueError(msg)
 
         with pytest.raises(
             expected_exception=NotImplementedError,
@@ -2651,20 +2654,20 @@ class TestOpenFrame(TestCase):
         dropframe = nanframe.from_deepcopy()
         dropframe.value_nan_handle(method="drop")
 
-        if [1.1, 1.0, 1.0] != dropframe.tsdf.iloc[:, 0].tolist():
+        if dropframe.tsdf.iloc[:, 0].tolist() != [1.1, 1.0, 1.0]:
             msg = "Method value_nan_handle() not working as intended"
             raise ValueError(msg)
-        if [2.1, 2.0, 2.0] != dropframe.tsdf.iloc[:, 1].tolist():
+        if dropframe.tsdf.iloc[:, 1].tolist() != [2.1, 2.0, 2.0]:
             msg = "Method value_nan_handle() not working as intended"
             raise ValueError(msg)
 
         fillframe = nanframe.from_deepcopy()
         fillframe.value_nan_handle(method="fill")
 
-        if [1.1, 1.0, 1.0, 1.1, 1.0] != fillframe.tsdf.iloc[:, 0].tolist():
+        if fillframe.tsdf.iloc[:, 0].tolist() != [1.1, 1.0, 1.0, 1.1, 1.0]:
             msg = "Method value_nan_handle() not working as intended"
             raise ValueError(msg)
-        if [2.1, 2.0, 1.8, 1.8, 2.0] != fillframe.tsdf.iloc[:, 1].tolist():
+        if fillframe.tsdf.iloc[:, 1].tolist() != [2.1, 2.0, 1.8, 1.8, 2.0]:
             msg = "Method value_nan_handle() not working as intended"
             raise ValueError(msg)
 
@@ -2705,20 +2708,20 @@ class TestOpenFrame(TestCase):
         dropframe = nanframe.from_deepcopy()
         dropframe.return_nan_handle(method="drop")
 
-        if [0.1, 0.05, 0.04] != dropframe.tsdf.iloc[:, 0].tolist():
+        if dropframe.tsdf.iloc[:, 0].tolist() != [0.1, 0.05, 0.04]:
             msg = "Method return_nan_handle() not working as intended"
             raise ValueError(msg)
-        if [0.01, 0.04, 0.06] != dropframe.tsdf.iloc[:, 1].tolist():
+        if dropframe.tsdf.iloc[:, 1].tolist() != [0.01, 0.04, 0.06]:
             msg = "Method return_nan_handle() not working as intended"
             raise ValueError(msg)
 
         fillframe = nanframe.from_deepcopy()
         fillframe.return_nan_handle(method="fill")
 
-        if [0.1, 0.05, 0.0, 0.01, 0.04] != fillframe.tsdf.iloc[:, 0].tolist():
+        if fillframe.tsdf.iloc[:, 0].tolist() != [0.1, 0.05, 0.0, 0.01, 0.04]:
             msg = "Method return_nan_handle() not working as intended"
             raise ValueError(msg)
-        if [0.01, 0.04, 0.02, 0.0, 0.06] != fillframe.tsdf.iloc[:, 1].tolist():
+        if fillframe.tsdf.iloc[:, 1].tolist() != [0.01, 0.04, 0.02, 0.0, 0.06]:
             msg = "Method return_nan_handle() not working as intended"
             raise ValueError(msg)
 
@@ -2747,11 +2750,11 @@ class TestOpenFrame(TestCase):
 
         if rframe.constituents[-1].label != "Asset_0_over_Asset_1":
             msg = "Method relative() not working as intended"
-            ValueError(msg)
+            raise ValueError(msg)
 
         if rframe.columns_lvl_zero[-1] != "Asset_0_over_Asset_1":
             msg = "Method relative() not working as intended"
-            ValueError(msg)
+            raise ValueError(msg)
 
         rframe.tsdf.iloc[:, -1] = rframe.tsdf.iloc[:, -1].add(1.0)
 
@@ -2762,7 +2765,7 @@ class TestOpenFrame(TestCase):
 
         if rflist != sflist:
             msg = "Method relative() not working as intended"
-            ValueError(msg)
+            raise ValueError(msg)
 
     def test_to_cumret(self: TestOpenFrame) -> None:
         """Test to_cumret method."""
@@ -2780,17 +2783,17 @@ class TestOpenFrame(TestCase):
         cframe = OpenFrame([cseries, ccseries])
         rframe = OpenFrame([rseries, rrseries])
 
-        if [ValueType.RTRN, ValueType.PRICE] != mframe.columns_lvl_one:
+        if mframe.columns_lvl_one != [ValueType.RTRN, ValueType.PRICE]:
             msg = "Method to_cumret() not working as intended"
             raise ValueError(msg)
 
-        if [ValueType.PRICE, ValueType.PRICE] != cframe.columns_lvl_one:
+        if cframe.columns_lvl_one != [ValueType.PRICE, ValueType.PRICE]:
             msg = "Method to_cumret() not working as intended"
             raise ValueError(msg)
 
         cframe_lvl_one = list(cframe.columns_lvl_one)
 
-        if [ValueType.RTRN, ValueType.RTRN] != rframe.columns_lvl_one:
+        if rframe.columns_lvl_one != [ValueType.RTRN, ValueType.RTRN]:
             msg = "Method to_cumret() not working as intended"
             raise ValueError(msg)
 
@@ -2798,7 +2801,7 @@ class TestOpenFrame(TestCase):
         cframe.to_cumret()
         rframe.to_cumret()
 
-        if [ValueType.PRICE, ValueType.PRICE] != mframe.columns_lvl_one:
+        if mframe.columns_lvl_one != [ValueType.PRICE, ValueType.PRICE]:
             msg = "Method to_cumret() not working as intended"
             raise ValueError(msg)
 
@@ -2806,7 +2809,7 @@ class TestOpenFrame(TestCase):
             msg = "Method to_cumret() not working as intended"
             raise ValueError(msg)
 
-        if [ValueType.PRICE, ValueType.PRICE] != rframe.columns_lvl_one:
+        if rframe.columns_lvl_one != [ValueType.PRICE, ValueType.PRICE]:
             msg = "Method to_cumret() not working as intended"
             raise ValueError(msg)
 
@@ -3691,7 +3694,7 @@ class TestOpenFrame(TestCase):
             )
             raise ValueError(msg)
 
-        minframe_weights = [f"{minw:.7f}" for minw in minframe.weights]
+        minframe_weights = [f"{minw:.7f}" for minw in list(minframe.weights)]
         if minframe_weights != [
             "0.1150421",
             "0.1854466",
@@ -3723,7 +3726,7 @@ class TestOpenFrame(TestCase):
             )
             raise ValueError(msg)
 
-        maxframe_weights = [f"{maxw:.7f}" for maxw in maxframe.weights]
+        maxframe_weights = [f"{maxw:.7f}" for maxw in list(maxframe.weights)]
         if maxframe_weights != [
             "0.1152015",
             "0.1721200",
